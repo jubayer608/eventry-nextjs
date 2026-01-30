@@ -19,7 +19,7 @@ const schema = new Schema({
   },
  bio: {
     required: true,
-    type: string
+    type: String
   },
 });
 

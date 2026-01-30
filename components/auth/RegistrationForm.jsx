@@ -1,8 +1,9 @@
+import { registerUser } from '@/app/actions';
 import React from 'react';
 
 const RegistrationForm = () => {
     return (
-        <form className="login-form">
+        <form className="login-form" action={registerUser}>
             
             <div>
               <label htmlFor="name">Full Name</label>
@@ -21,7 +22,7 @@ const RegistrationForm = () => {
             
             <div>
               <label htmlFor="phone">Phone Number</label>
-              <input type="tel" name="pnone" id="phone" />
+              <input type="tel" name="phone" id="phone" />
             </div>
           
             <div>
