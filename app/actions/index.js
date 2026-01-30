@@ -1,9 +1,10 @@
 "use server"
 
-import { createUser, findUserByCredentials, updateInterest } from "@/db/queries"
+import EmailTemplate from "@/components/payments/EmailTemplate";
+import { createUser, findUserByCredentials, getEventById, updateGoing, updateInterest } from "@/db/queries"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-
+import { Resend } from 'resend';
 async function registerUser(formData) {
     const user = Object.fromEntries(formData)
     const created = await createUser(user)
@@ -30,9 +31,37 @@ async function addInterestedEvent(eventId,authId) {
     }
     revalidatePath("/")
 }
-
+async function addGoingEvent(eventId,user) {
+    try {
+       await updateGoing(eventId,user?.id)
+       await sendEmail(eventId,user)
+    } catch (error) {
+        throw error;
+    }
+    revalidatePath("/")
+    redirect("/")
+}
+async function sendEmail(eventId, user) {
+    try{
+      console.log(eventId, user, process.env.RESEND_API_KEY);
+      const event = await getEventById(eventId);
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const message = `Dear ${user?.name}, you have been successfully registered for the event, ${event?.name}. Please carry this email and your official id to the venue. We are excited to have you here.`;
+      const sent =  resend.emails.send({
+        from: "jubayerhossan.dev@gmail.com",
+        to: user?.email,
+        subject: "Successfully Registered for the event!",
+        react: EmailTemplate({ message })
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+ 
 export{
     registerUser,
     performLogin,
-    addInterestedEvent
+    addInterestedEvent,
+    addGoingEvent,
+    sendEmail
 }
