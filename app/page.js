@@ -4,7 +4,7 @@ import Header from "@/components/landing/Header";
 
 export default function Home() {
   return (
-     <section class="container"> 
+     <section className="container"> 
        <Header></Header>
        <EventList></EventList>
      </section>
